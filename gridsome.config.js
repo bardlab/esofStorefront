@@ -8,7 +8,7 @@ module.exports = {
   siteName: 'ESOF Storefront',
   plugins: [
     {
-      use: 'gridsome-plugin-tailwindcss'
+      use: 'gridsome-plugin-tailwindcss',
     }
   ]
 }

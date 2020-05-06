@@ -15,11 +15,11 @@
       <p class="">Themes</p>
   </div>
   <div class="mx-auto  text-center">
-      <p class="font-normal text-2xl">150+</p>
+      <p class="font-normal text-2xl">{{Object.values(countryStats).reduce((a,b) => a+b )}}+</p>
       <p class="heading">Sessions</p>
   </div>
   <div class="mx-auto  text-center">
-      <p class="font-normal text-2xl">25+</p>
+      <p class="font-normal text-2xl">{{Object.keys(countryStats).length}}+</p>
       <p class="heading">Countries</p>
   </div>
   <div class="mx-auto  text-center">
@@ -27,11 +27,25 @@
       <p class="heading">Speakers</p>
   </div>
 </div>
-	<div class="max-w-4xl mx-auto my-5">
+<!--	<div class="max-w-4xl mx-auto my-5">
     <img src="../assets/world.png" alt="Geographical distribution">
+  </div>-->
+	<div class="max-w-4xl mx-auto my-5">
+    <GChart
+    type="GeoChart"
+    :data="gChartData"
+    :options="{
+        colorAxis: {'colors': ['#00853f', '#00853f']},
+        magnifyingGlass : {enable: true, zoomFactor: 7.5},
+        legend: 'none',
+        chart: {
+          title: 'Global Participation',
+          subtitle: 'Number of sessions from participating countries',
+        }
+      }"
+  />
   </div>
 </div>
-
 
 <div class="container mb-10 p-10 max-w-5xl" id="analytics">
   <h2 class="text-3xl font-thin text-center mb-10 border-b border-gray-400">Conference Analytics</h2>
@@ -85,6 +99,8 @@
 
 <script>
 import Header from '../components/Header';
+import { GChart } from 'vue-google-charts';
+import programme from '../data/anonProgrammeDump.json';
 
 export default {
   name: "Home",
@@ -95,8 +111,33 @@ export default {
     ]
   },
 	components: {
-		Header
-	}
+    Header,
+    GChart,
+  },
+  data(){
+    return{
+      programme, 
+      countryStats: new Object()
+    }
+  },
+  computed: {
+    gChartData(){
+      var gChartData = Object.keys(this.countryStats).map( (k) => [k, this.countryStats[k]] );
+      gChartData.unshift( ['Country', 'Sessions'] );
+      return gChartData;
+    }
+  },
+  created() {
+    this.programme.map( (e) => {
+      if (this.countryStats.hasOwnProperty(e.Country) )
+      {
+          this.countryStats[e.Country] += 1; 
+      } else {
+          this.countryStats[e.Country] = 1; 
+      }
+    });
+  }
+
 }
 </script>
 
